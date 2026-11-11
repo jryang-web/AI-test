@@ -15,3 +15,17 @@
 [報修系統操作說明（Word）](文件/報修系統操作說明.docx)
 
 [報修登記系統提案（PowerPoint）](文件/報修登記系統提案.pptx)
+
+## PWA 安裝與離線使用
+
+網站新增 Web App Manifest、192／512 像素安裝圖示、Apple 主畫面圖示及 Service Worker。GitHub Pages 使用 `/AI-test/` 子路徑，所有安裝及快取路徑皆為相對路徑。
+
+- Android／桌面 Chrome、Edge：以 HTTPS 開啟網站，使用瀏覽器「安裝應用程式」；瀏覽器提供安裝事件時，頁面也會顯示安裝按鈕。
+- iPhone／iPad：使用 Safari 的「分享 → 加入主畫面」。實際選單因瀏覽器版本而異。
+- 第一次必須連線並成功完成快取，之後才能離線開啟介面。報修送出及最近清單仍需要網路；不提供離線送出、背景同步或通知。
+- 不快取 Supabase API 回應或報修紀錄，不儲存未送出的表單。斷線時保持頁面開啟，避免重新載入遺失輸入；恢復連線後確認清單再送出。
+- 新版本等待舊視窗關閉後啟用，避免自動重整打斷填寫。更新靜態資源時須同步增加 `sw.js` 的快取版本。
+
+本機開發：在儲存庫根目錄執行 `python3 -m http.server 8000`，用瀏覽器開啟本機 HTTP 網站（localhost 支援 Service Worker）；不要以 `file://` 開啟。正式安裝及離線測試需在 HTTPS 網站進行。本次沒有變更資料庫或 SQL。
+
+自動驗證：環境需提供 Node.js、Playwright 與 `/usr/bin/chromium`，執行 `node tests/pwa.cjs`；驗證 Pages 子路徑、離線重開、阻止離線送出、保留當頁輸入、恢復連線提示及手機寬度。測試不新增正式報修資料。
