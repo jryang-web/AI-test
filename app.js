@@ -6,6 +6,14 @@ const formMessage = document.querySelector('#form-message');
 const listMessage = document.querySelector('#list-message');
 const requests = document.querySelector('#requests');
 let client;
+let cachedRequests = [];
+let selectedUrgency = '全部';
+const filterButtons = document.querySelectorAll('[data-urgency]');
+filterButtons.forEach(button => button.addEventListener('click', () => {
+  selectedUrgency = button.dataset.urgency;
+  filterButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  renderRequests();
+}));
 function message(target, text, kind = '') {
   target.textContent = text;
   target.className = kind;
@@ -17,6 +25,25 @@ function element(tag, text, className = '') {
   node.className = className;
   return node;
 }
+// 篩選只使用最近一次讀取的 20 筆資料，不發送資料庫請求。
+function renderRequests() {
+  const visibleRequests = cachedRequests.filter(row => selectedUrgency === '全部' || row.urgency === selectedUrgency);
+    const fragment = document.createDocumentFragment();
+    for (const row of visibleRequests) {
+      const card = element('article', '', 'request');
+      card.append(element('span', row.category, 'badge'));
+      card.append(element('span', `緊急程度：${row.urgency}`, row.urgency === '高' ? 'badge urgency-high' : 'badge'));
+      card.append(element('span', row.status, 'badge'));
+      card.append(element('h3', `${row.location} · ${row.reporter_name}`));
+      card.append(element('p', row.description, 'description'));
+      const date = new Date(row.created_at);
+      card.append(element('p', `登記時間：${Number.isNaN(date.getTime()) ? '時間不明' : date.toLocaleString('zh-TW')}`, 'meta'));
+      fragment.append(card);
+    }
+    requests.replaceChildren(fragment);
+
+  message(listMessage, visibleRequests.length ? `已顯示 ${visibleRequests.length} 筆報修（${selectedUrgency}）。` : '已載入的清單中沒有符合條件的報修。');
+}
 async function loadRequests() {
   refresh.disabled = true;
   requests.setAttribute('aria-busy', 'true');
@@ -26,18 +53,8 @@ async function loadRequests() {
       .select('id,created_at,reporter_name,location,category,description,urgency,status')
       .order('created_at', { ascending: false }).order('id', { ascending: false }).limit(20);
     if (error) throw error;
-    const fragment = document.createDocumentFragment();
-    for (const row of data) {
-      const card = element('article', '', 'request');
-      for (const text of [row.category, `緊急程度：${row.urgency}`, row.status]) card.append(element('span', text, 'badge'));
-      card.append(element('h3', `${row.location} · ${row.reporter_name}`));
-      card.append(element('p', row.description, 'description'));
-      const date = new Date(row.created_at);
-      card.append(element('p', `登記時間：${Number.isNaN(date.getTime()) ? '時間不明' : date.toLocaleString('zh-TW')}`, 'meta'));
-      fragment.append(card);
-    }
-    requests.replaceChildren(fragment);
-    message(listMessage, data.length ? `已顯示 ${data.length} 筆報修。` : '目前還沒有報修紀錄。');
+    cachedRequests = data;
+    renderRequests();
   } catch {
     message(listMessage, '無法更新清單，請稍後按「重新整理」。若仍有舊資料，其內容可能不是最新。', 'error');
   } finally {

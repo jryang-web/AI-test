@@ -17,5 +17,5 @@
 <label>問題說明<textarea name="description" required maxlength="2000" rows="5" placeholder="請描述問題與發生情況（最多 2000 字）"></textarea></label>
 <button id="submit" type="submit" disabled>送出報修</button><p id="form-message" role="status" aria-live="polite"></p>
 </form></section>
-<section aria-labelledby="list-title"><div class="section-head"><h2 id="list-title">最近報修</h2><button id="refresh" type="button">重新整理</button></div><p class="hint">最近 20 筆，依登記時間由新到舊排列。</p><p id="list-message" role="status" aria-live="polite"></p><div id="requests" aria-busy="false"></div></section>
+<section aria-labelledby="list-title"><div class="section-head"><h2 id="list-title">最近報修</h2><button id="refresh" type="button">重新整理</button></div><p class="hint">最近 20 筆，依登記時間由新到舊排列。</p><div class="urgency-filters" role="group" aria-label="依緊急程度篩選"><button type="button" data-urgency="全部" aria-pressed="true" aria-controls="requests">全部</button><button type="button" data-urgency="高" aria-pressed="false" aria-controls="requests">高</button><button type="button" data-urgency="中" aria-pressed="false" aria-controls="requests">中</button><button type="button" data-urgency="低" aria-pressed="false" aria-controls="requests">低</button></div><p id="list-message" role="status" aria-live="polite"></p><div id="requests" aria-busy="false"></div></section>
 <footer>報修登記系統 · 公開示範</footer></main></body></html>
