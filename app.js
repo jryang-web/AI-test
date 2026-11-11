@@ -64,6 +64,10 @@ async function loadRequests() {
 }
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
+  if (!navigator.onLine) {
+    message(formMessage, '目前離線，無法送出。請保持頁面開啟，連線後再送出；關閉或重新載入會遺失未送出的內容。', 'error');
+    return;
+  }
   if (!client || submit.disabled || !form.reportValidity()) return;
   const values = new FormData(form);
   const payload = Object.fromEntries(['reporter_name', 'location', 'category', 'description', 'urgency'].map(key => [key, String(values.get(key) || '').trim()]));
