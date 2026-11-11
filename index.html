@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>報修登記系統</title><link rel="stylesheet" href="./style.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script defer src="./config.js"></script><script defer src="./app.js"></script>
+</head>
+<body><main>
+<header><p class="eyebrow">一起維護更好的工作環境</p><h1>報修登記</h1><p>記下問題，讓每一件報修都有紀錄。</p></header>
+<section aria-labelledby="form-title"><h2 id="form-title">新增報修</h2><p class="hint">所有欄位皆必填。此為公開示範，請使用虛構姓名與地點，勿填敏感資訊。</p>
+<form id="repair-form">
+<div class="grid"><label>報修人<input name="reporter_name" required maxlength="100" autocomplete="off" placeholder="例如：示範同事甲"></label>
+<label>地點或部門<input name="location" required maxlength="200" placeholder="例如：示範辦公室"></label>
+<label>類別<select name="category" required><option value="">請選擇類別</option><option>設備</option><option>網路</option><option>環境</option><option>其他</option></select></label>
+<label>緊急程度<select name="urgency" required><option>低</option><option selected>中</option><option>高</option></select></label></div>
+<label>問題說明<textarea name="description" required maxlength="2000" rows="5" placeholder="請描述問題與發生情況（最多 2000 字）"></textarea></label>
+<button id="submit" type="submit" disabled>送出報修</button><p id="form-message" role="status" aria-live="polite"></p>
+</form></section>
+<section aria-labelledby="list-title"><div class="section-head"><h2 id="list-title">最近報修</h2><button id="refresh" type="button">重新整理</button></div><p class="hint">最近 20 筆，依登記時間由新到舊排列。</p><p id="list-message" role="status" aria-live="polite"></p><div id="requests" aria-busy="false"></div></section>
+<footer>報修登記系統 · 公開示範</footer></main></body></html>
